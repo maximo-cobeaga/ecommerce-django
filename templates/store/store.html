@@ -148,6 +148,7 @@
 
         <div class="row">
 
+       {% if products %}   
         {% for product in products %}
           <div class="col-md-4">
             <figure class="card card-product-grid">
@@ -170,11 +171,15 @@
             </figure>
           </div>
           <!-- col.// -->
-
         {% endfor %}
+        {% else %}
+          <div>
+            <h2 class="text-center"> No se enocontraron resultados. Intente luego. </h2>
+          </div>
+        {% endif %}
         </div>
         <!-- row end.// -->
-
+        
         <nav class="mt-4" aria-label="Page navigation sample">
           
           {% if products.has_other_pages %}
