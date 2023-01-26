@@ -2,13 +2,13 @@
 <section class="section-content padding-y bg">
   <div class="container">
     <!-- ============================ COMPONENT 1 ================================= -->
-    
+
     {% if not cart_items %}
 
     <h2 class="text-center">El carrito de compras se encuentra vacio</h2>
-    <br>
+    <br />
     <div class="text-center">
-        <a href="{% url 'store' %}" class="btn btn-primary">Continua Comprando</a>
+      <a href="{% url 'store' %}" class="btn btn-primary">Continua Comprando</a>
     </div>
 
     {% else %}
@@ -37,12 +37,21 @@
                       />
                     </div>
                     <figcaption class="info">
-                      <a href="{{ cart_item.product.get_url }}" class="title text-dark"
+                      <a
+                        href="{{ cart_item.product.get_url }}"
+                        class="title text-dark"
                         >{{ cart_item.product.product_name }}</a
                       >
+
                       <p class="text-muted small">
-                        Matrix: 25 Mpx <br />
-                        Marca: Canon
+                        {% if cart_item.variations.all %} 
+                      
+                          {% for item in cart_item.variations.all %} 
+                        
+                            {{ item.variation_category | capfirst }} : {{ item.variation_value | capfirst }} <br>
+                         
+                          {% endfor %} 
+                        {%endif %}
                       </p>
                     </figcaption>
                   </figure>
@@ -53,8 +62,7 @@
                     <div class="input-group input-spinner">
                       <div class="input-group-prepend">
                         <a
-                          href="{% url 'remove_cart' cart_item.product.id %}"
-
+                          href="{% url 'remove_cart' cart_item.product.id cart_item.id %}"
                           class="btn btn-light"
                           type="button"
                           id="button-plus"
@@ -68,14 +76,20 @@
                         value="{{ cart_item.quantity }}"
                       />
                       <div class="input-group-append">
-                        <a
-                          href="{% url 'add_cart' cart_item.product.id %}"
+                        <form action="{% url 'add_cart' cart_item.product.id %}" method="post">
+
+                          {% csrf_token %}
+                          {% for item in cart_item.variations.all %}
+                            <input type="hidden" name="{{ item.variation_category | lower }}" value="{{ item.variation_value | capfirst }}">
+                          {% endfor %}
+                        <button
                           class="btn btn-light"
-                          type="button"
+                          type="submit"
                           id="button-minus"
                         >
                           <i class="fa fa-plus"></i>
-                        </a>
+                        </button>
+                      </form>
                       </div>
                     </div>
                     <!-- input-group.// -->
@@ -92,7 +106,12 @@
                   <!-- price-wrap .// -->
                 </td>
                 <td class="text-right">
-                  <a href="{% url 'remove_cart_item' cart_item.product.id %}" class="btn btn-danger"> Eliminar</a>
+                  <a
+                    href="{% url 'remove_cart_item' cart_item.product.id cart_item.id %}"
+                    class="btn btn-danger"
+                  >
+                    Eliminar</a
+                  >
                 </td>
               </tr>
 
@@ -141,7 +160,7 @@
       <!-- col.// -->
     </div>
     {% endif %}
-    
+
     <!-- row.// -->
     <!-- ============================ COMPONENT 1 END .// ================================= -->
   </div>
